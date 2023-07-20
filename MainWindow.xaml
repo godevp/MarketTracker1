@@ -1,0 +1,233 @@
+﻿<Window x:Class="MarketTracker1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MarketTracker1"
+        mc:Ignorable="d"
+        Title="SteamPriceTracker" Height="950 " Width="1080"
+        Background="#cecdca">
+
+    <Window.Resources>
+        <FontFamily x:Key="RobotoFont">/SteamPriceTracker;component/Fonts/#Roboto</FontFamily>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <Style x:Key="LowestPriceLabelStyle" TargetType="Label">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Label">
+                        <Grid>
+                            <Border Background="#a3a8e6" Height="25" CornerRadius="8">
+                                <ContentPresenter VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="MedianPriceLabelStyle" TargetType="Label">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Label">
+                        <Grid>
+                            <Border Background="#9dcdb3" Height="25" CornerRadius="8">
+                                <ContentPresenter VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="RoundedTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="0.7" CornerRadius="8">
+                            <ScrollViewer Margin="0" x:Name="PART_ContentHost" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Left" Margin="5,0,0,0">
+                <TextBlock Text="Bank: " VerticalAlignment="Center" FontFamily="{StaticResource RobotoFont}"/>
+                <Border Width="100" Height="25" Margin="5,0,0,0" Background="White" BorderBrush="Black" BorderThickness="0.7" CornerRadius="8">
+                    <TextBox x:Name="BankTextBox" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" FontFamily="{StaticResource RobotoFont}"/>
+                </Border>
+            </StackPanel>
+
+            <!--Add Button-->
+            <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Right" Margin="0,0,5,0">
+                <Button Content="Add" Width="200" Height="29" Background="#50FF76" Click="Add_Click" Margin="0,0,10,0" FontFamily="{StaticResource RobotoFont}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="0.7" CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#B350FF76"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <!-- Update Button -->
+                <Button Content="Update" Width="200" Height="29" Click="Update_Click" Background="Gray" FontFamily="{StaticResource RobotoFont}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="0.7" CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#B3A9A9A9"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1" Background="#cecdca">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="" Grid.Column="0" FontFamily="{StaticResource RobotoFont}"/>
+            <TextBlock Text="  Name" Grid.Column="1" FontFamily="{StaticResource RobotoFont}"/>
+            <TextBlock Text="  Amount" Grid.Column="2" FontFamily="{StaticResource RobotoFont}"/>
+            <TextBlock Text="  Lowest Price" Grid.Column="3" FontFamily="{StaticResource RobotoFont}"/>
+            <TextBlock Text="  Median Price" Grid.Column="4" FontFamily="{StaticResource RobotoFont}"/>
+        </Grid>
+
+        <ListBox ItemsSource="{Binding LineElements}" Grid.Row="2" Background="#cecdca">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="160"/>
+                            <ColumnDefinition Width="75"/>
+                            <ColumnDefinition Width="75"/>
+                            <ColumnDefinition Width="75"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Vertical" Grid.Column="0" VerticalAlignment="Center">
+                            <Button Name="UpButton" Click="Up_Click" CommandParameter="{Binding}" Height="15" Width="15" Margin="0,0,0,-1" FontFamily="{StaticResource RobotoFont}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Path Data="M 5 15 L 15 15 L 10 5 Z" Fill="Black" />
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                            <Button Name="DownButton" Click="Down_Click" CommandParameter="{Binding}" Height="15" Width="15" Margin="0,-1,0,0" FontFamily="{StaticResource RobotoFont}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Path Data="M 5 5 L 15 5 L 10 15 Z" Fill="Black" />
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+                        <TextBox Text="{Binding Name}" Grid.Column="1" Width="175" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,3,0" Style="{StaticResource RoundedTextBoxStyle}" Height="22" FontFamily="{StaticResource RobotoFont}"/>
+                        <TextBox Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="85" Grid.Column="2" VerticalAlignment="Center" Margin="3,0,3,0" Style="{StaticResource RoundedTextBoxStyle}" Height="22" FontFamily="{StaticResource RobotoFont}"/>
+                        <Label Content="{Binding LowestPrice}" Style="{StaticResource LowestPriceLabelStyle}" HorizontalAlignment="Stretch" Grid.Column="3" VerticalAlignment="Center" Margin="3,0,3,0" FontFamily="{StaticResource RobotoFont}"/>
+                        <Label Content="{Binding MedianPrice}" Style="{StaticResource MedianPriceLabelStyle}" HorizontalAlignment="Stretch" Grid.Column="4" VerticalAlignment="Center" Margin="3,0,0,0" FontFamily="{StaticResource RobotoFont}"/>
+                        <!-- Link Text -->
+                        <TextBox Text="{Binding Link}" Grid.Column="5" VerticalAlignment="Center" Margin="0,0,6,0" Height="22" FontFamily="{StaticResource RobotoFont}">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="TextBox">
+                                                <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="0.7" CornerRadius="8">
+                                                    <ScrollViewer Margin="0" x:Name="PART_ContentHost" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsEditMode}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                        <!-- Edit Button -->
+                        <Button Content="Edit" Height="20" Background="Black" Foreground="White" Click="Edit_Click" CommandParameter="{Binding}" Grid.Column="6" VerticalAlignment="Center" Margin="0,0,3,0" FontFamily="{StaticResource RobotoFont}">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="0.7" CornerRadius="8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#B7000000"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Open Steam button -->
+                        <Button Content="Open" Height="20" Background="Black" Foreground="White" Click="OpenInSteam_Click" CommandParameter="{Binding Link}" Grid.Column="7" VerticalAlignment="Center" Margin="3,0,3,0" FontFamily="{StaticResource RobotoFont}">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="0.7" CornerRadius="8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#B7000000"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!--Delete Button -->
+                        <Button Content="Delete" Height="20" Background="Red" Foreground="White" Click="Delete_Click" Grid.Column="8" VerticalAlignment="Center" Margin="3,0,0,0" FontFamily="{StaticResource RobotoFont}">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="0.7" CornerRadius="8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#B7FF0000"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Window>
